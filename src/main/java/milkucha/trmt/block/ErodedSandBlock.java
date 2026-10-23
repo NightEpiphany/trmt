@@ -33,6 +33,7 @@ import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 public class ErodedSandBlock extends Block implements SimpleWaterloggedBlock {
 
@@ -70,12 +71,12 @@ public class ErodedSandBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public boolean canPlaceLiquid(@Nullable LivingEntity entity, BlockGetter getter, BlockPos pos, BlockState state, Fluid fluid) {
+    public boolean canPlaceLiquid(@Nullable LivingEntity entity, @NonNull BlockGetter getter, @NonNull BlockPos pos, BlockState state, @NonNull Fluid fluid) {
         return !state.getValue(WATERLOGGED) && state.getValue(STAGE) > 0 && fluid == Fluids.WATER;
     }
 
     @Override
-    public boolean placeLiquid(LevelAccessor world, BlockPos pos, BlockState state, FluidState fluidState) {
+    public boolean placeLiquid(@NonNull LevelAccessor world, @NonNull BlockPos pos, BlockState state, @NonNull FluidState fluidState) {
         if (state.getValue(WATERLOGGED) || state.getValue(STAGE) == 0) return false;
         if (!world.isClientSide()) {
             world.setBlock(pos, state.setValue(WATERLOGGED, true), Block.UPDATE_ALL);
@@ -85,14 +86,14 @@ public class ErodedSandBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public FluidState getFluidState(BlockState state) {
+    public @NonNull FluidState getFluidState(BlockState state) {
         return state.getValue(WATERLOGGED) ? Fluids.WATER.defaultFluidState() : super.getFluidState(state);
     }
 
     @Override
-    public BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess tickAccess,
-                                   BlockPos pos, Direction direction, BlockPos neighborPos,
-                                   BlockState neighborState, RandomSource random) {
+    public @NonNull BlockState updateShape(BlockState state, @NonNull LevelReader world, @NonNull ScheduledTickAccess tickAccess,
+                                           @NonNull BlockPos pos, @NonNull Direction direction, @NonNull BlockPos neighborPos,
+                                           @NonNull BlockState neighborState, @NonNull RandomSource random) {
         if (state.getValue(WATERLOGGED)) {
             tickAccess.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
         }
@@ -100,8 +101,8 @@ public class ErodedSandBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block sourceBlock,
-                                 @Nullable Orientation wireOrientation, boolean notify) {
+    public void neighborChanged(@NonNull BlockState state, @NonNull Level world, @NonNull BlockPos pos, @NonNull Block sourceBlock,
+                                @Nullable Orientation wireOrientation, boolean notify) {
         super.neighborChanged(state, world, pos, sourceBlock, wireOrientation, notify);
         if (!world.isClientSide() && world.getBlockState(pos.above()).canOcclude()) {
             world.setBlock(pos, Blocks.SAND.defaultBlockState(), Block.UPDATE_ALL);
@@ -109,7 +110,7 @@ public class ErodedSandBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+    public void randomTick(@NonNull BlockState state, ServerLevel world, BlockPos pos, @NonNull RandomSource random) {
         if (world.getBlockState(pos.above()).canOcclude()) {
             world.setBlock(pos, Blocks.SAND.defaultBlockState(), Block.UPDATE_ALL);
             return;
@@ -143,12 +144,12 @@ public class ErodedSandBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+    public @NonNull VoxelShape getShape(BlockState state, @NonNull BlockGetter world, @NonNull BlockPos pos, @NonNull CollisionContext context) {
         return OUTLINE_SHAPES[state.getValue(STAGE)];
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+    public @NonNull VoxelShape getCollisionShape(BlockState state, @NonNull BlockGetter world, @NonNull BlockPos pos, @NonNull CollisionContext context) {
         return COLLISION_SHAPES[state.getValue(STAGE)];
     }
 }

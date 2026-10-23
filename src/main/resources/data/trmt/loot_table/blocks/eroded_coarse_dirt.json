@@ -10,11 +10,10 @@
           "name": "minecraft:coarse_dirt"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
     }
-  ]
+  ],
+  "random_sequence": "trmt:blocks/eroded_coarse_dirt"
 }

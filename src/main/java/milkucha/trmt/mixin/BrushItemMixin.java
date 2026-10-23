@@ -31,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Mixin(BrushItem.class)
 public class BrushItemMixin {
 
+    @Unique
     private static final int BRUSH_TICKS_TO_COMPLETE = 2;
 
     @Unique
@@ -45,18 +46,18 @@ public class BrushItemMixin {
     }
 
     @Inject(method = "onUseTick", at = @At("HEAD"))
-    private void trmt$onBrushTick(Level world, LivingEntity user, ItemStack stack, int remainingUseTicks, CallbackInfo ci) {
-        if (world.isClientSide()) return;
-        if (!(user instanceof Player player)) return;
+    private void trmt$onBrushTick(Level level, LivingEntity livingEntity, ItemStack itemStack, int ticksRemaining, CallbackInfo ci) {
+        if (level.isClientSide()) return;
+        if (!(livingEntity instanceof Player player)) return;
 
-        int currentTick = 200 - remainingUseTicks + 1;
+        int currentTick = 200 - ticksRemaining + 1;
         if (currentTick % 10 != 5) return;
 
-        HitResult hitResult = user.pick(4.5, 0.0F, false);
+        HitResult hitResult = livingEntity.pick(4.5, 0.0F, false);
         if (!(hitResult instanceof BlockHitResult blockHitResult) || hitResult.getType() != HitResult.Type.BLOCK) return;
 
         BlockPos pos = blockHitResult.getBlockPos();
-        BlockState state = world.getBlockState(pos);
+        BlockState state = level.getBlockState(pos);
 
         if (!state.is(TRMTBlocks.ERODED_SAND)) {
             trmt$brushProgress.remove(player.getUUID());
@@ -77,19 +78,19 @@ public class BrushItemMixin {
         if (stage > 0) {
             BlockState newState = state.setValue(ErodedSandBlock.STAGE, stage - 1);
             if (stage - 1 == 0) newState = newState.setValue(ErodedSandBlock.WATERLOGGED, false);
-            world.setBlock(pos, newState, Block.UPDATE_ALL);
+            level.setBlock(pos, newState, Block.UPDATE_ALL);
             manager.removeEntry(pos);
-            manager.writeCooldownEntry(pos, TRMTBlocks.ERODED_SAND, world.getGameTime());
+            manager.writeCooldownEntry(pos, TRMTBlocks.ERODED_SAND, level.getGameTime());
         } else {
-            world.setBlock(pos, Blocks.SAND.defaultBlockState(), Block.UPDATE_ALL);
+            level.setBlock(pos, Blocks.SAND.defaultBlockState(), Block.UPDATE_ALL);
             manager.removeEntry(pos);
         }
 
-        EquipmentSlot slot = stack.equals(player.getItemBySlot(EquipmentSlot.OFFHAND))
+        EquipmentSlot slot = itemStack.equals(player.getItemBySlot(EquipmentSlot.OFFHAND))
                 ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
-        stack.hurtAndBreak(1, player, slot);
+        itemStack.hurtAndBreak(1, player, slot);
 
-        ((ServerLevel) world).levelEvent(2005, pos, 0);
+        ((ServerLevel) level).levelEvent(2005, pos, 0);
         trmt$brushProgress.put(uuid, 0);
     }
 }

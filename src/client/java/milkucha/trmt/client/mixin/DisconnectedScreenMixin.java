@@ -1,5 +1,6 @@
 package milkucha.trmt.client.mixin;
 
+import com.mojang.blaze3d.Blaze3D;
 import milkucha.trmt.network.TRMTPackets;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -8,7 +9,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.DisconnectionDetails;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.util.Util;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -42,7 +42,7 @@ public abstract class DisconnectedScreenMixin extends Screen {
             trmt$downloadButton = this.addRenderableWidget(
                 Button.builder(
                     Component.translatable("trmt.button.download_update"),
-                    btn -> Util.getPlatform().openUri(URI.create(TRMTPackets.MODRINTH_URL))
+                        _ -> Blaze3D.openUri(URI.create(TRMTPackets.MODRINTH_URL))
                 ).bounds(backBtn.getX(), backBtn.getY() + 25, backBtn.getWidth(), 20).build()
             );
             return;

@@ -11,6 +11,8 @@ import milkucha.trmt.network.UpdateStagePayload;
 import milkucha.trmt.network.VersionCheckPayload;
 import milkucha.trmt.network.VersionResponsePayload;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -25,11 +27,14 @@ import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.NonNull;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TRMTClient implements ClientModInitializer {
+@Environment(EnvType.CLIENT)
+public final class TRMTClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		TRMTClientConfig.load();
@@ -46,12 +51,12 @@ public class TRMTClient implements ClientModInitializer {
 		BlockColorRegistry.register(
 				List.of(new BlockTintSource() {
 					@Override
-					public int color(BlockState state) {
+					public int color(@NonNull BlockState state) {
 						return 0x79C05A;
 					}
 
 					@Override
-					public int colorInWorld(BlockState state, BlockAndTintGetter world, BlockPos pos) {
+					public int colorInWorld(@NonNull BlockState state, @NonNull BlockAndTintGetter world, @NonNull BlockPos pos) {
 						return BiomeColors.getAverageGrassColor(world, pos);
 					}
 				}),

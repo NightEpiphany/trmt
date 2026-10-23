@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Dirt block produced by foot-traffic erosion.
@@ -56,7 +57,7 @@ public class ErodedDirtBlock extends Block {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block sourceBlock, @Nullable Orientation wireOrientation, boolean notify) {
+    public void neighborChanged(@NonNull BlockState state, @NonNull Level world, @NonNull BlockPos pos, @NonNull Block sourceBlock, @Nullable Orientation wireOrientation, boolean notify) {
         super.neighborChanged(state, world, pos, sourceBlock, wireOrientation, notify);
         if (!world.isClientSide() && world.getBlockState(pos.above()).canOcclude()) {
             BlockState revert = state.is(TRMTBlocks.ERODED_COARSE_DIRT)
@@ -67,7 +68,7 @@ public class ErodedDirtBlock extends Block {
     }
 
     @Override
-    public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+    public void randomTick(@NonNull BlockState state, ServerLevel world, BlockPos pos, @NonNull RandomSource random) {
         if (world.getBlockState(pos.above()).canOcclude()) {
             BlockState revert = state.is(TRMTBlocks.ERODED_COARSE_DIRT)
                     ? Blocks.COARSE_DIRT.defaultBlockState()
@@ -117,12 +118,12 @@ public class ErodedDirtBlock extends Block {
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+    public @NonNull VoxelShape getShape(@NonNull BlockState state, @NonNull BlockGetter world, @NonNull BlockPos pos, @NonNull CollisionContext context) {
         return SHAPE;
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+    public @NonNull VoxelShape getCollisionShape(@NonNull BlockState state, @NonNull BlockGetter world, @NonNull BlockPos pos, @NonNull CollisionContext context) {
         return SHAPE;
     }
 }

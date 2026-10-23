@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.item.v1.BlockTransformerHelper;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerConfigurationConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking;
@@ -19,12 +20,13 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class TRMT implements ModInitializer {
+public final class TRMT implements ModInitializer {
 	public static final String MOD_ID = "trmt";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
@@ -47,6 +49,26 @@ public class TRMT implements ModInitializer {
 		PayloadTypeRegistry.serverboundConfiguration().register(VersionResponsePayload.ID, VersionResponsePayload.CODEC);
 		PayloadTypeRegistry.clientboundPlay().register(SyncChunkPayload.ID, SyncChunkPayload.CODEC);
 		PayloadTypeRegistry.clientboundPlay().register(UpdateStagePayload.ID, UpdateStagePayload.CODEC);
+
+		BlockTransformerHelper.registerTilling(
+				TRMTBlocks.ERODED_GRASS_BLOCK,
+				BlockStateProvider.of(Blocks.GRASS_BLOCK)
+		);
+
+		BlockTransformerHelper.registerTilling(
+				TRMTBlocks.ERODED_DIRT,
+				BlockStateProvider.of(Blocks.DIRT)
+		);
+
+		BlockTransformerHelper.registerFlattening(
+				TRMTBlocks.ERODED_GRASS_BLOCK,
+				BlockStateProvider.of(Blocks.GRASS_BLOCK)
+		);
+
+		BlockTransformerHelper.registerFlattening(
+				TRMTBlocks.ERODED_DIRT,
+				BlockStateProvider.of(Blocks.DIRT)
+		);
 
 		// During configuration, send our version; client responds with its own version.
 		ServerConfigurationConnectionEvents.CONFIGURE.register((handler, server) -> {

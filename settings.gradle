@@ -10,4 +10,4 @@ pluginManagement {
 }
 
 // Should match your modid
-rootProject.name = 'trmt'
+rootProject.name = 'TRMT-26.3-fabric'
